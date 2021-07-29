@@ -125,7 +125,7 @@ def evaluate(
                 ]
             )
 
-        # Obser reward and next obs
+        # Observe reward and next obs
         n_obs, _, done, infos = eval_envs.step(n_action)
 
         n_masks = torch.tensor(
