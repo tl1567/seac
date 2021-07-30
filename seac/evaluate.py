@@ -6,18 +6,23 @@ import gym
 from a2c import A2C
 from wrappers import RecordEpisodeStatistics, TimeLimit
 
+import time
+
 path = "pretrained/rware-small-4ag"
 env_name = "rware-small-4ag-v1"
 time_limit = 500 # 25 for LBF
 
-RUN_STEPS = 1500
+RUN_STEPS = 5000
 
 env = gym.make(env_name)
 env = TimeLimit(env, time_limit)
 env = RecordEpisodeStatistics(env)
 
+device = "cpu"
+# device = "cuda:0"
+
 agents = [
-    A2C(i, osp, asp, 0.1, 0.1, False, 1, 1, "cuda:0")
+    A2C(i, osp, asp, 0.1, 0.1, False, 1, 1, device)
     for i, (osp, asp) in enumerate(zip(env.observation_space, env.action_space))
 ]
 
@@ -30,6 +35,7 @@ for i in range(RUN_STEPS):
     obs = [torch.from_numpy(o) for o in obs]
     _, actions, _ , _ = zip(*[agent.model.act(obs[agent.agent_id], None, None) for agent in agents])
     actions = [a.item() for a in actions]
+    time.sleep(2)
     env.render()
     obs, _, done, info = env.step(actions)
     if all(done):
