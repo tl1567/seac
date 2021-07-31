@@ -12,7 +12,7 @@ path = "pretrained/rware-small-4ag"
 env_name = "rware-small-4ag-v1"
 time_limit = 500 # 25 for LBF
 
-RUN_STEPS = 5000
+RUN_STEPS = 2000
 
 env = gym.make(env_name)
 env = TimeLimit(env, time_limit)
