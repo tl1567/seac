@@ -35,7 +35,7 @@ for i in range(RUN_STEPS):
     obs = [torch.from_numpy(o) for o in obs]
     _, actions, _ , _ = zip(*[agent.model.act(obs[agent.agent_id], None, None) for agent in agents])
     actions = [a.item() for a in actions]
-    time.sleep(2)
+    time.sleep(1)
     env.render()
     obs, _, done, info = env.step(actions)
     if all(done):
