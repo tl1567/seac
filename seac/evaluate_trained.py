@@ -8,7 +8,7 @@ from wrappers import RecordEpisodeStatistics, TimeLimit
 
 import time
 
-path = '/home/timlautk/Desktop/2021 Zebra Research Intern/GitHub/seac/seac/results/trained_models/13/u50000'
+path = '/home/timlautk/Desktop/2021 Zebra Research Intern/GitHub/seac/seac/results/sacred/13/u50000'
 env_name = "rware-tiny-2ag-v1"
 time_limit = 500 # 25 for LBF
 

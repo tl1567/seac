@@ -85,7 +85,7 @@ class A2C:
         torch.save(self.saveables, os.path.join(path, "models.pt"))
 
     def restore(self, path):
-        checkpoint = torch.load(os.path.join(path, "models.pt"))
+        checkpoint = torch.load(os.path.join(path, "models.pt"), map_location='cpu')
         for k, v in self.saveables.items():
             v.load_state_dict(checkpoint[k].state_dict())
 
