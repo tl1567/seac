@@ -174,7 +174,7 @@ def main(
     utils.cleanup_log_dir(eval_dir)
     utils.cleanup_log_dir(save_dir)
 
-    torch.set_num_threads(1)
+    torch.set_num_threads(32)
     envs = make_vec_envs(
         env_name,
         seed,
