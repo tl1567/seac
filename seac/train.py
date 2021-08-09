@@ -261,6 +261,10 @@ def main(
         for agent in agents:
             agent.storage.after_update()
 
+        if len(all_infos) > 1 and writer:
+            squashed = _squash_info(all_infos)
+            writer.add_scalar("reward", squashed['episode_reward'], j)
+
         if j % log_interval == 0 and len(all_infos) > 1:
             squashed = _squash_info(all_infos)
 
@@ -274,6 +278,9 @@ def main(
             _log.info(
                 f"Last {len(all_infos)} training episodes mean reward {squashed['episode_reward'].sum():.3f}"
             )
+
+
+            
 
             for k, v in squashed.items():
                 _run.log_scalar(k, v, j)
