@@ -36,8 +36,8 @@ def config():
     num_processes = 4
     num_steps = 5
 
-    device = "cpu"
-    # device = "cuda:0"
+    # device = "cpu"
+    device = "cuda:1"
 
 
 class A2C:
