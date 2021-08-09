@@ -7,6 +7,8 @@ from collections import deque
 from os import path
 from pathlib import Path
 
+import sys
+
 import numpy as np
 import torch
 from sacred import Experiment
@@ -164,7 +166,9 @@ def main(
     if loss_dir:
         loss_dir = path.expanduser(loss_dir.format(id=str(_run._id)))
         utils.cleanup_log_dir(loss_dir)
+        #print(loss_dir)
         writer = SummaryWriter(loss_dir)
+        #sys.exit(0)
     else:
         writer = None
 
@@ -260,10 +264,10 @@ def main(
 
         for agent in agents:
             agent.storage.after_update()
-
-        if len(all_infos) > 1 and writer:
-            squashed = _squash_info(all_infos)
-            writer.add_scalar("reward", squashed['episode_reward'], j)
+        
+        #if len(all_infos) > 1 and writer:
+        #    squashed = _squash_info(all_infos)
+        #    writer.add_scalar("reward", squashed['episode_reward'], j)
 
         if j % log_interval == 0 and len(all_infos) > 1:
             squashed = _squash_info(all_infos)
@@ -278,8 +282,6 @@ def main(
             _log.info(
                 f"Last {len(all_infos)} training episodes mean reward {squashed['episode_reward'].sum():.3f}"
             )
-
-
             
 
             for k, v in squashed.items():
@@ -294,9 +296,10 @@ def main(
                 save_at = path.join(cur_save_dir, f"agent{agent.agent_id}")
                 os.makedirs(save_at, exist_ok=True)
                 agent.save(save_at)
-            archive_name = shutil.make_archive(cur_save_dir, "xztar", save_dir, f"u{j}")
-            shutil.rmtree(cur_save_dir)
-            _run.add_artifact(archive_name)
+            #archive_name = shutil.make_archive(cur_save_dir, "xztar", save_dir, f"u{j}")
+            #shutil.rmtree(cur_save_dir)
+            #_run.add_artifact(archive_name)
+            #print("ignore save_interval,", cur_save_dir)
 
         if eval_interval is not None and (
             j > 0 and j % eval_interval == 0 or j == num_updates
