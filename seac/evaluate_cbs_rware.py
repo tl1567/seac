@@ -82,8 +82,8 @@ def cbs_planning(warehouse):
 def plan_to_actions(plan):
     for i in range(len(plan)):
         print(plan[f'agent{i}'])
-
-    actions = {f'agent{i}': , for i in range(len(plan))}
+        
+    actions = {f'agent{i}': [{'t': t, 'action': } for t in ] for i in range(len(plan))}
     return actions
 
 
