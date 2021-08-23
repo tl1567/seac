@@ -17,10 +17,10 @@ from absl import flags
 
 FLAGS = flags.FLAGS
 
-flags.DEFINE_string("path", 'results/trained_models/002/u80000', "path of the model file")
+# flags.DEFINE_string("path", "pretrained/rware-small-4ag", "path of the model file")
 flags.DEFINE_string("env_name", "rware-tiny-2ag-v1", "env name")
 flags.DEFINE_integer("time_limit", 500, "maximum number of timesteps for each episode")
-# path = 'results/trained_models/002/u80000'
+# path = "pretrained/rware-small-4ag"
 # env_name = "rware-tiny-2ag-v1"
 # time_limit = 500 # 25 for LBF
 
@@ -72,7 +72,7 @@ def cbs_planning(warehouse):
     cbs = CBS(env)
     solution = cbs.search()
     if not solution:
-        print(" Solution not found" )
+        print("Solution not found" )
         return
     # cost = env.compute_solution_cost(solution)
 
@@ -83,7 +83,7 @@ def plan_to_actions(plan):
     for i in range(len(plan)):
         print(plan[f'agent{i}'])
 
-
+    actions = {f'agent{i}': , for i in range(len(plan))}
     return actions
 
 
