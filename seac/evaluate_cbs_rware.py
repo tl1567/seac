@@ -193,7 +193,9 @@ def main(_):
     obs = env.reset()
     ## up, down, left, right = 1, 2, 3, 4
     init_directions = {f'agent{i+1}': [int(np.where(obs[i][3:7] == 1)[0] + 1)] for i in range(len(obs))}  
+    plan = cbs_planning(env)
     actions_from_plan, directions = plan_to_actions(init_directions, plan)
+
 
     max_len_actions = max([len(v) for v in actions_from_plan.values()])
     for i in range(len(actions_from_plan)):
@@ -207,6 +209,7 @@ def main(_):
 
     actions_from_plan = [actions_from_plan[f'agent{i+1}'] for i in range(len(actions_from_plan))]
     directions = [directions[f'agent{i+1}'] for i in range(len(directions))]
+    
 
     # for i in range(RUN_STEPS):
     for i in range(max_len_actions + 2):
