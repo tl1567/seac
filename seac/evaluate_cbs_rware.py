@@ -41,6 +41,7 @@ def cbs_planning(warehouse):
     agents_id = [warehouse.grid[_LAYER_AGENTS, agent.y, agent.x] for agent in warehouse.agents]
     agents_loc = [[agent.y.item(), agent.x.item()] for agent in warehouse.agents]
     goals = [[shelf.y.item(), shelf.x.item()] for shelf in warehouse.request_queue]
+    # print('Goals:', goals)
 
     ## Shelf requesting the closest agent to pick it up
     def compute_dist_agents_goals(agents_loc, goals):
@@ -70,7 +71,7 @@ def cbs_planning(warehouse):
     
     if len(set(np.argmin(dist, axis=1))) == len(np.argmin(dist, axis=1)):
         goals = [goals[i] for i in dist_argmins]
-        names = [f'agent{i}' for i in range(warehouse.n_agents)]
+        names = [f'agent{i+1}' for i in range(warehouse.n_agents)]
         agents = [{'start': agents_loc[i], 'goal': goals[i], 'name': names[i]} for i in range(len(agents_loc))]
     else: 
         agents = []
@@ -84,83 +85,86 @@ def cbs_planning(warehouse):
     cbs = CBS(env)
     solution = cbs.search()
     if not solution:
-        print("Solution not found")
+        print("Conflict-based search (CBS) planning cannot find any solution!")
         return
-    # cost = env.compute_solution_cost(solution)
 
-    # print(solution)
     return solution
 
-def get_action(obs, plan, t): 
-    ## obs and plan of one agent
-    direction = int(np.where(obs[3:7] == 1)[0] + 1)  ## up, down, left, right = 1, 2, 3, 4
+def get_action(Direction, plan, t): 
+    ## direction and plan of one agent   
 
-    # Action = []
-    # action = []
-    # for i in range(len(plan) - 1):
     if plan[t+1]['x'] - plan[t]['x'] == 1:
-        # Action.append(4)  ## move right
-        Action = 4
+        Action = 4  ## move right        
     elif plan[t+1]['x'] - plan[t]['x'] == -1:
-        # Action.append(3)  ## move left
-        Action = 3
+        Action = 3  ## move left        
     elif plan[t+1]['y'] - plan[t]['y'] == 1:
-        # Action.append(1)  ## move up
-        Action = agent_1
+        Action = 2  ## move down        
     elif plan[t+1]['y'] - plan[t]['y'] == -1:
-        # Action.append(2)  ## move down
-        Action = 2
+        Action = 1  ## move up        
     else:
-        # Action.append(0)  ## no movement 
-        Action = 0
+        Action = 0  ## no movement 
+        
 
-    # for i in range(len(Action)):
-    # if Action[-1] == direction:
-    if Action == direction:
+    if Action == Direction[-1]:
         action = [1]
+        direction = [Action]
     elif Action == 1:
-        if direction == 2:
+        if Direction[-1] == 2:
             action = [3, 3, 1]
-        elif direction == 3:
+            direction = [3, 1, 1]
+        elif Direction[-1] == 3:
             action = [3, 1]
-        elif direction == 4:
+            direction = [1, 1]
+        elif Direction[-1] == 4:
             action = [2, 1]
+            direction = [1, 1]
     elif Action == 2:
-        if direction == 1:
+        if Direction[-1] == 1:
             action = [3, 3, 1]
-        elif direction == 3:
+            direction = [4, 2, 2]
+        elif Direction[-1] == 3:
             action = [2, 1]
-        elif direction == 4:
+            direction = [2, 2]
+        elif Direction[-1] == 4:
             action = [3, 1]
+            direction = [2, 2]
     elif Action == 3:
-        if direction == 1:
+        if Direction[-1] == 1:
             action = [2, 1]
-        elif direction == 2:
+            direction = [3, 3]
+        elif Direction[-1] == 2:
             action = [3, 1]
-        elif direction == 4:
+            direction = [3, 3]
+        elif Direction[-1] == 4:
             action = [3, 3, 1]
+            direction = [2, 3, 3]
     elif Action == 4:
-        if direction == 1:
+        if Direction[-1] == 1:
             action = [3, 1]
-        elif direction == 2:
+            direction = [4, 4]
+        elif Direction[-1] == 2:
             action = [2, 1]
-        elif direction == 3:
+            direction = [4, 4]
+        elif Direction[-1] == 3:
             action = [3, 3, 1]
+            direction = [1, 4, 4]
     elif Action == 0: 
         action = [0]
+        direction = Direction[-1]
+ 
+    return action, direction
 
-        # action += action
 
-    return action
-
-def plan_to_actions(obs, plan):
+def plan_to_actions(init_directions, plan):
+    ## direction and plan of all agents
     actions = {f'agent{i+1}': [] for i in range(len(plan))}
+    directions = init_directions
     for i in range(len(plan)):
         for t in range(len(plan[f'agent{i+1}'])-1):
-            actions[f'agent{i+1}'] += get_action(obs[i], plan[f'agent{i+1}'], t)
-        # print(actions)
-    # actions = {f'agent{i}': [{'t': t, 'action': } for t in ] for i in range(len(plan))}
-    return actions
+            actions[f'agent{i+1}'] += get_action(directions[f'agent{i+1}'], plan[f'agent{i+1}'], t)[0]
+            directions[f'agent{i+1}'] += get_action(directions[f'agent{i+1}'], plan[f'agent{i+1}'], t)[1]
+
+    return actions, directions
 
 
 def main(_):
@@ -185,29 +189,47 @@ def main(_):
     # for agent in agents:
     #     agent.restore(path + f"/agent{agent.agent_id}")
 
+    
     obs = env.reset()
+    ## up, down, left, right = 1, 2, 3, 4
+    init_directions = {f'agent{i+1}': [int(np.where(obs[i][3:7] == 1)[0] + 1)] for i in range(len(obs))}  
+    actions_from_plan, directions = plan_to_actions(init_directions, plan)
 
-    plan = cbs_planning(env)
-    print('Plan:', plan)
-    actions = plan_to_actions(obs, plan)
-    print('Actions:', actions)
+    max_len_actions = max([len(v) for v in actions_from_plan.values()])
+    for i in range(len(actions_from_plan)):
+        actions_from_plan[f'agent{i+1}'].append(4)
+        while len(actions_from_plan[f'agent{i+1}']) < max_len_actions + 2:
+            actions_from_plan[f'agent{i+1}'] += [0]
 
-    for i in range(RUN_STEPS):
-        obs = [torch.from_numpy(o) for o in obs]
+    for i in range(len(directions)):        
+        while len(directions[f'agent{i+1}']) < max_len_actions + 3:
+            directions[f'agent{i+1}'].append(directions[f'agent{i+1}'][-1])
+
+    actions_from_plan = [actions_from_plan[f'agent{i+1}'] for i in range(len(actions_from_plan))]
+    directions = [directions[f'agent{i+1}'] for i in range(len(directions))]
+
+    # for i in range(RUN_STEPS):
+    for i in range(max_len_actions + 2):
+        # obs = [torch.from_numpy(o) for o in obs]
         # print('Observation:', obs[0].numpy())
-        _, actions, _ , _ = zip(*[agent.model.act(obs[agent.agent_id], None, None) for agent in agents])
-        actions = [a.item() for a in actions]
-        # actions = plan_to_actions(obs, plan)
+        # _, actions, _ , _ = zip(*[agent.model.act(obs[agent.agent_id], None, None) for agent in agents])
+        # actions = [a.item() for a in actions]
+        actions = [actions_from_plan[j][i] for j in range(len(actions_from_plan))]
         # print('Actions:', actions)
-        time.sleep(1)
         env.render()
+
+        if i < max_len_actions + 1:
+            time.sleep(1)
+        else:
+            time.sleep(5)
+        
         obs, _, done, info = env.step(actions)
-        if all(done):
-            obs = env.reset()
-            print("--- Episode Finished ---")
-            print(f"Episode rewards: {sum(info['episode_reward'])}")
-            print(info)
-            print(" --- ")
+        # if all(done):
+        #     obs = env.reset()
+        #     print("--- Episode Finished ---")
+        #     print(f"Episode rewards: {sum(info['episode_reward'])}")
+        #     print(info)
+        #     print(" --- ")
 
 if __name__ == "__main__":
     app.run(main)
