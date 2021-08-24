@@ -72,7 +72,7 @@ def cbs_planning(warehouse):
     cbs = CBS(env)
     solution = cbs.search()
     if not solution:
-        print("Solution not found" )
+        print("Solution not found")
         return
     # cost = env.compute_solution_cost(solution)
 
@@ -118,6 +118,7 @@ def main(_):
         print('Observation:', obs)
         _, actions, _ , _ = zip(*[agent.model.act(obs[agent.agent_id], None, None) for agent in agents])
         actions = [a.item() for a in actions]
+        # actions = plan_to_actions(plan)
         print('Actions:', actions)
         time.sleep(1)
         env.render()
