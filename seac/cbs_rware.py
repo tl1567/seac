@@ -312,7 +312,7 @@ class CBS(object):
     def generate_plan(self, solution):
         plan = {}
         for agent, path in solution.items():
-            path_dict_list = [{'t':state.time, 'x':state.location.x, 'y':state.location.y} for state in path]
+            path_dict_list = [{'t':state.time, 'x':state.location.y, 'y':state.location.x} for state in path]
             plan[agent] = path_dict_list
         return plan
 

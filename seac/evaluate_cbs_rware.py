@@ -26,8 +26,19 @@ flags.DEFINE_integer("time_limit", 500, "maximum number of timesteps for each ep
 
 
 def cbs_planning(warehouse):
+    _AXIS_Z = 0
+    _AXIS_Y = 1
+    _AXIS_X = 2
+
+    _COLLISION_LAYERS = 2
+
+    _LAYER_AGENTS = 0
+    _LAYER_SHELFS = 1
+
+
     dimension = list(warehouse.grid_size)
     obstacles = []
+    agents_id = [warehouse.grid[_LAYER_AGENTS, agent.y, agent.x] for agent in warehouse.agents]
     agents_loc = [[agent.y.item(), agent.x.item()] for agent in warehouse.agents]
     goals = [[shelf.y.item(), shelf.x.item()] for shelf in warehouse.request_queue]
 
@@ -46,14 +57,15 @@ def cbs_planning(warehouse):
 
     ## solve recursively the goal of each agent (the agent with the minimum distance to a goal will be assigned with that goal;
     ## both the agent and the goal will be removed from the queues, and this is done recursively)
-    def assign_goal_to_agent(agents_loc, goals):
+    def assign_goal_to_agent(agents_loc, agents_id, goals):
         dist = compute_dist_agents_goals(agents_loc, goals)
         dist = np.array(dist)
         ind = np.unravel_index(np.argmin(dist, axis=None), dist.shape)
-        agents.append({'start': agents_loc[ind[0]], 'goal': goals[ind[1]], 'name': f'agent{len(agents)}'})
+        agents.append({'start': agents_loc[ind[0]], 'goal': goals[ind[1]], 'name': f'agent{agents_id[ind[0]]}'})
         del agents_loc[ind[0]]
+        del agents_id[ind[0]]
         del goals[ind[1]]
-        return agents_loc, goals
+        return agents_loc, agents_id, goals
 
     
     if len(set(np.argmin(dist, axis=1))) == len(np.argmin(dist, axis=1)):
@@ -63,7 +75,7 @@ def cbs_planning(warehouse):
     else: 
         agents = []
         while len(agents_loc):
-            agents_loc, goals = assign_goal_to_agent(agents_loc, goals)
+            agents_loc, agents_id, goals = assign_goal_to_agent(agents_loc, agents_id, goals)
 
 
     env = Environment(dimension, agents, obstacles)  ## Environment from MAPP 
@@ -76,19 +88,83 @@ def cbs_planning(warehouse):
         return
     # cost = env.compute_solution_cost(solution)
 
+    # print(solution)
     return solution
 
+def get_action(obs, plan, t): 
+    ## obs and plan of one agent
+    direction = int(np.where(obs[3:7] == 1)[0] + 1)  ## up, down, left, right = 1, 2, 3, 4
 
-def plan_to_actions(plan):
+    # Action = []
+    # action = []
+    # for i in range(len(plan) - 1):
+    if plan[t+1]['x'] - plan[t]['x'] == 1:
+        # Action.append(4)  ## move right
+        Action = 4
+    elif plan[t+1]['x'] - plan[t]['x'] == -1:
+        # Action.append(3)  ## move left
+        Action = 3
+    elif plan[t+1]['y'] - plan[t]['y'] == 1:
+        # Action.append(1)  ## move up
+        Action = agent_1
+    elif plan[t+1]['y'] - plan[t]['y'] == -1:
+        # Action.append(2)  ## move down
+        Action = 2
+    else:
+        # Action.append(0)  ## no movement 
+        Action = 0
+
+    # for i in range(len(Action)):
+    # if Action[-1] == direction:
+    if Action == direction:
+        action = [1]
+    elif Action == 1:
+        if direction == 2:
+            action = [3, 3, 1]
+        elif direction == 3:
+            action = [3, 1]
+        elif direction == 4:
+            action = [2, 1]
+    elif Action == 2:
+        if direction == 1:
+            action = [3, 3, 1]
+        elif direction == 3:
+            action = [2, 1]
+        elif direction == 4:
+            action = [3, 1]
+    elif Action == 3:
+        if direction == 1:
+            action = [2, 1]
+        elif direction == 2:
+            action = [3, 1]
+        elif direction == 4:
+            action = [3, 3, 1]
+    elif Action == 4:
+        if direction == 1:
+            action = [3, 1]
+        elif direction == 2:
+            action = [2, 1]
+        elif direction == 3:
+            action = [3, 3, 1]
+    elif Action == 0: 
+        action = [0]
+
+        # action += action
+
+    return action
+
+def plan_to_actions(obs, plan):
+    actions = {f'agent{i+1}': [] for i in range(len(plan))}
     for i in range(len(plan)):
-        print(plan[f'agent{i}'])
-        
-    actions = {f'agent{i}': [{'t': t, 'action': } for t in ] for i in range(len(plan))}
+        for t in range(len(plan[f'agent{i+1}'])-1):
+            actions[f'agent{i+1}'] += get_action(obs[i], plan[f'agent{i+1}'], t)
+        # print(actions)
+    # actions = {f'agent{i}': [{'t': t, 'action': } for t in ] for i in range(len(plan))}
     return actions
 
 
 def main(_):
-    path = FLAGS.path
+    # path = FLAGS.path
     env_name = FLAGS.env_name
     time_limit = FLAGS.time_limit
 
@@ -112,14 +188,17 @@ def main(_):
     obs = env.reset()
 
     plan = cbs_planning(env)
+    print('Plan:', plan)
+    actions = plan_to_actions(obs, plan)
+    print('Actions:', actions)
 
     for i in range(RUN_STEPS):
         obs = [torch.from_numpy(o) for o in obs]
-        print('Observation:', obs)
+        # print('Observation:', obs[0].numpy())
         _, actions, _ , _ = zip(*[agent.model.act(obs[agent.agent_id], None, None) for agent in agents])
         actions = [a.item() for a in actions]
-        # actions = plan_to_actions(plan)
-        print('Actions:', actions)
+        # actions = plan_to_actions(obs, plan)
+        # print('Actions:', actions)
         time.sleep(1)
         env.render()
         obs, _, done, info = env.step(actions)
