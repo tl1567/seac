@@ -40,43 +40,49 @@ def cbs_planning(warehouse):
     obstacles = []
     agents_id = [warehouse.grid[_LAYER_AGENTS, agent.y, agent.x] for agent in warehouse.agents]
     agents_loc = [[agent.y.item(), agent.x.item()] for agent in warehouse.agents]
-    goals = [[shelf.y.item(), shelf.x.item()] for shelf in warehouse.request_queue]
-    # print('Goals:', goals)
+    goals_loc = [list(goal) for goal in warehouse.goals]
+    requested_shelves_loc = [[shelf.y.item(), shelf.x.item()] for shelf in warehouse.request_queue]
+    # print('Requested shelves:', requested_shelves)
+    agents_carrying_shelf = [agent.carrying_shelf for agent in warehouse.agents]
+
+    print(agents_carrying_shelf)
 
     ## Shelf requesting the closest agent to pick it up
-    def compute_dist_agents_goals(agents_loc, goals):
-        dist = [[abs(agents_loc[i][0] - goals[j][0]) + abs(agents_loc[i][1] - goals[j][1]) for j in range(len(goals))] for i in range(len(agents_loc))]
+    def compute_dist_agents_requested_shelves(agents_loc, requested_shelves_loc):
+        dist = [[abs(agents_loc[i][0] - requested_shelves_loc[j][0]) \
+            + abs(agents_loc[i][1] - requested_shelves_loc[j][1]) for j in range(len(requested_shelves_loc))] \
+                for i in range(len(agents_loc))]
         return dist
 
-    dist = compute_dist_agents_goals(agents_loc, goals)
+    dist = compute_dist_agents_requested_shelves(agents_loc, requested_shelves_loc)
 
     def compute_dist_argmins(dist):
-        dist_argmins = [np.argmin(dist[j]) for j in range(len(goals))]
+        dist_argmins = [np.argmin(dist[j]) for j in range(len(dist))]
         return dist_argmins
 
     dist_argmins = compute_dist_argmins(dist)
 
-    ## solve recursively the goal of each agent (the agent with the minimum distance to a goal will be assigned with that goal;
+    ## solve recursively the requested shelf of each agent (the agent with the minimum distance to a goal will be assigned with that goal;
     ## both the agent and the goal will be removed from the queues, and this is done recursively)
-    def assign_goal_to_agent(agents_loc, agents_id, goals):
-        dist = compute_dist_agents_goals(agents_loc, goals)
+    def assign_requested_shelves_to_agent(agents_loc, agents_id, requested_shelves_loc):
+        dist = compute_dist_agents_requested_shelves(agents_loc, requested_shelves_loc)
         dist = np.array(dist)
         ind = np.unravel_index(np.argmin(dist, axis=None), dist.shape)
-        agents.append({'start': agents_loc[ind[0]], 'goal': goals[ind[1]], 'name': f'agent{agents_id[ind[0]]}'})
+        agents.append({'start': agents_loc[ind[0]], 'goal': requested_shelves_loc[ind[1]], 'name': f'agent{agents_id[ind[0]]}'})
         del agents_loc[ind[0]]
         del agents_id[ind[0]]
-        del goals[ind[1]]
-        return agents_loc, agents_id, goals
+        del requested_shelves_loc[ind[1]]
+        return agents_loc, agents_id, requested_shelves_loc
 
     
     if len(set(np.argmin(dist, axis=1))) == len(np.argmin(dist, axis=1)):
-        goals = [goals[i] for i in dist_argmins]
+        requested_shelves_loc = [requested_shelves_loc[i] for i in dist_argmins]
         names = [f'agent{i+1}' for i in range(warehouse.n_agents)]
-        agents = [{'start': agents_loc[i], 'goal': goals[i], 'name': names[i]} for i in range(len(agents_loc))]
+        agents = [{'start': agents_loc[i], 'goal': requested_shelves_loc[i], 'name': names[i]} for i in range(len(agents_loc))]
     else: 
         agents = []
         while len(agents_loc):
-            agents_loc, agents_id, goals = assign_goal_to_agent(agents_loc, agents_id, goals)
+            agents_loc, agents_id, requested_shelves_loc = assign_requested_shelves_to_agent(agents_loc, agents_id, requested_shelves_loc)
 
 
     env = Environment(dimension, agents, obstacles)  ## Environment from MAPP 
@@ -196,7 +202,7 @@ def main(_):
     plan = cbs_planning(env)
     actions_from_plan, directions = plan_to_actions(init_directions, plan)
 
-
+    min_len_actions = min([len(v) for v in actions_from_plan.values()])
     max_len_actions = max([len(v) for v in actions_from_plan.values()])
     for i in range(len(actions_from_plan)):
         actions_from_plan[f'agent{i+1}'].append(4)
@@ -214,7 +220,7 @@ def main(_):
     # for i in range(RUN_STEPS):
     for i in range(max_len_actions + 2):
         # obs = [torch.from_numpy(o) for o in obs]
-        # print('Observation:', obs[0].numpy())
+        
         # _, actions, _ , _ = zip(*[agent.model.act(obs[agent.agent_id], None, None) for agent in agents])
         # actions = [a.item() for a in actions]
         actions = [actions_from_plan[j][i] for j in range(len(actions_from_plan))]
@@ -227,6 +233,16 @@ def main(_):
             time.sleep(5)
         
         obs, _, done, info = env.step(actions)
+
+        # print([agent.carrying_shelf for agent in env.agents])
+        # print([agent.has_delivered for agent in env.agents])
+
+
+        ## replanning as soon as one agent picks up a shelf or delivers a shelf
+        if any(i == 4 for i in actions):
+            
+            pass
+        
         # if all(done):
         #     obs = env.reset()
         #     print("--- Episode Finished ---")

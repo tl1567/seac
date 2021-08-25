@@ -209,7 +209,7 @@ def main(_):
 
     actions_from_plan = [actions_from_plan[f'agent{i+1}'] for i in range(len(actions_from_plan))]
     directions = [directions[f'agent{i+1}'] for i in range(len(directions))]
-    
+
 
     # for i in range(RUN_STEPS):
     for i in range(max_len_actions + 2):
@@ -224,7 +224,7 @@ def main(_):
         if i < max_len_actions + 1:
             time.sleep(1)
         else:
-            time.sleep(5)
+            time.sleep(10)
         
         obs, _, done, info = env.step(actions)
         # if all(done):
