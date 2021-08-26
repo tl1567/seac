@@ -51,7 +51,7 @@ def cbs_planning(warehouse):
     dist = compute_dist_agents_goals(agents_loc, goals)
 
     def compute_dist_argmins(dist):
-        dist_argmins = [np.argmin(dist[j]) for j in range(len(goals))]
+        dist_argmins = [np.argmin(dist[j]) for j in range(len(dist))]
         return dist_argmins
 
     dist_argmins = compute_dist_argmins(dist)
@@ -160,7 +160,8 @@ def plan_to_actions(init_directions, plan):
     actions = {f'agent{i+1}': [] for i in range(len(plan))}
     directions = init_directions
     for i in range(len(plan)):
-        for t in range(len(plan[f'agent{i+1}'])-1):
+        # print(len(plan[f'agent{i+1}'])-1)
+        for t in range(len(plan[f'agent{i+1}'])-1):            
             actions[f'agent{i+1}'] += get_action(directions[f'agent{i+1}'], plan[f'agent{i+1}'], t)[0]
             directions[f'agent{i+1}'] += get_action(directions[f'agent{i+1}'], plan[f'agent{i+1}'], t)[1]
 
@@ -222,9 +223,9 @@ def main(_):
         env.render()
 
         if i < max_len_actions + 1:
-            time.sleep(2)
+            time.sleep(1)
         else:
-            time.sleep(30)
+            time.sleep(20)
         
         obs, _, done, info = env.step(actions)
         # if all(done):
