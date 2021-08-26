@@ -41,10 +41,12 @@ def cbs_planning(warehouse):
     agents_id = [warehouse.grid[_LAYER_AGENTS, agent.y, agent.x] for agent in warehouse.agents]
     agents_loc = [[agent.y.item(), agent.x.item()] for agent in warehouse.agents]
     goals_loc = [list(goal) for goal in warehouse.goals]
-    requested_shelves_loc = [[shelf.y.item(), shelf.x.item()] for shelf in warehouse.request_queue]
-    # print('Requested shelves:', requested_shelves)
+    requested_shelves_loc = [[shelf.y.item(), shelf.x.item()] for shelf in warehouse.request_queue]    
     agents_carrying_shelf = [agent.carrying_shelf for agent in warehouse.agents]
 
+    
+
+    # print('Requested shelves:', requested_shelves)
     print(agents_carrying_shelf)
 
     ## Shelf requesting the closest agent to pick it up

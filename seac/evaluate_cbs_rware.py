@@ -222,9 +222,9 @@ def main(_):
         env.render()
 
         if i < max_len_actions + 1:
-            time.sleep(1)
+            time.sleep(2)
         else:
-            time.sleep(10)
+            time.sleep(30)
         
         obs, _, done, info = env.step(actions)
         # if all(done):
