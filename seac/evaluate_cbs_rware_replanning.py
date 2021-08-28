@@ -166,7 +166,8 @@ def cbs_planning(warehouse):
         _, shelves_loc = shelf_ids_coordinates(warehouse, warehouse.shelfs)
         # print('Shelves:', shelves_loc)
         for shelf_loc in nearby_carrying_shelves_loc:
-            if shelf_loc in shelves_loc and shelf_loc not in agents_carrying_shelves_loc:
+            # if shelf_loc in shelves_loc and shelf_loc not in agents_carrying_shelves_loc and shelf_loc not in agents_not_carrying_shelves_loc:
+            if shelf_loc in shelves_loc:
                 obstacles.append(shelf_loc)
 
         
@@ -260,7 +261,7 @@ def get_action(Direction, plan, t):
 def plan_to_actions(init_directions, plan):
     ## direction and plan of all agents
     actions = {f'agent{i+1}': [] for i in range(len(plan))}
-    directions = init_directions
+    directions = init_directions    
     for i in range(len(plan)):
         # print(f'direction of agent{i+1}:', directions[f'agent{i+1}'])
         # print(f'plan of agent{i+1}:', plan[f'agent{i+1}'])
@@ -268,6 +269,8 @@ def plan_to_actions(init_directions, plan):
             actions[f'agent{i+1}'] += get_action(directions[f'agent{i+1}'], plan[f'agent{i+1}'], t)[0]
             directions[f'agent{i+1}'] += get_action(directions[f'agent{i+1}'], plan[f'agent{i+1}'], t)[1]
 
+        print(actions)
+        print(directions)
     return actions, directions
 
 
@@ -358,7 +361,8 @@ def main(_):
         # actions = [actions_from_plan[k][i] for k in range(len(actions_from_plan))]
 
         ## replanning as soon as one agent picks up a shelf or delivers a shelf
-        if i == len(actions_from_plan[0])-1:
+        # if i == len(actions_from_plan[0])-1:
+        if i > 0:
         # for i in range(len(actions_from_plan[0])):
         # if any(actions_from_plan[k][-1] == 4 for k in range(len(actions_from_plan))):
             plan = cbs_planning(env)
@@ -371,7 +375,7 @@ def main(_):
                 directions[k] += directions_dict[f'agent{k+1}']
                 # print('length', len(actions_from_plan[k]))
 
-            print('i:', i)
+            # print('i:', i)
             print("Actions:", actions_from_plan)
             # print("Directions:", directions)
             
