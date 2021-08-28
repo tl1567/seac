@@ -58,7 +58,7 @@ def cbs_planning(warehouse):
 
     ## solve recursively the goal of each agent (the agent with the minimum distance to a goal will be assigned with that goal;
     ## both the agent and the goal will be removed from the queues, and this is done recursively)
-    def assign_goal_to_agent(agents_loc, agents_id, goals):
+    def assign_goal_to_agent(agents, agents_loc, agents_id, goals):
         dist = compute_dist_agents_goals(agents_loc, goals)
         dist = np.array(dist)
         ind = np.unravel_index(np.argmin(dist, axis=None), dist.shape)
@@ -66,7 +66,7 @@ def cbs_planning(warehouse):
         del agents_loc[ind[0]]
         del agents_id[ind[0]]
         del goals[ind[1]]
-        return agents_loc, agents_id, goals
+        return agents, agents_loc, agents_id, goals
 
     
     if len(set(np.argmin(dist, axis=1))) == len(np.argmin(dist, axis=1)):
@@ -76,7 +76,7 @@ def cbs_planning(warehouse):
     else: 
         agents = []
         while len(agents_loc):
-            agents_loc, agents_id, goals = assign_goal_to_agent(agents_loc, agents_id, goals)
+            agents, agents_loc, agents_id, goals = assign_goal_to_agent(agents, agents_loc, agents_id, goals)
 
 
     env = Environment(dimension, agents, obstacles)  ## Environment from MAPP 
