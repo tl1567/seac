@@ -153,8 +153,8 @@ def cbs_planning(warehouse):
         dist_agents_carrying_shelves_goals = np.array(dist_agents_carrying_shelves_goals)
         ind = np.argmin(dist_agents_carrying_shelves_goals, axis=1)
         names_agents_carrying_shelves = [f'agent{agents_carrying_shelves_id[i]}' for i in range(len(agents_carrying_shelves_id))]
-        goals_agents_carrying_shelves = [goals_loc[i] for i in ind]
-        # goals_agents_carrying_shelves = goals_loc
+        # goals_agents_carrying_shelves = [goals_loc[i] for i in ind]
+        goals_agents_carrying_shelves = goals_loc
         agents += [{'start': agents_carrying_shelves_loc[i], 'goal': goals_agents_carrying_shelves[i], \
             'name': names_agents_carrying_shelves[i]} for i in range(len(agents_carrying_shelves_loc))]
         
@@ -176,20 +176,11 @@ def cbs_planning(warehouse):
         # if shelf_loc in nearby_carrying_shelves_loc and shelf_loc not in requested_shelves_loc:
         # if shelf_loc not in requested_shelves_loc:
         # if shelf_loc in shelves_loc:
-            obstacles.append(shelf_loc)
-
-    obstacles = [tuple(obstacle) for obstacle in obstacles]
+            obstacles.append(tuple(shelf_loc))
         
-
-    # sort_func = lambda z : z['name']
-    # agents.sort(key=sort_func)
     # print('Agents:', agents)
     # print('Obstacles:', obstacles)
     
-    
-
-
-
 
     env = Environment(dimension, agents, obstacles)  ## Environment from MAPP 
 
