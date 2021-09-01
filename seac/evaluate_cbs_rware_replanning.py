@@ -148,6 +148,7 @@ def cbs_planning(warehouse):
         agents, agents_not_carrying_shelves_loc, agents_not_carrying_shelves_id, uncarried_requested_shelves_loc = \
             assign_target_to_agent(agents, agents_not_carrying_shelves_loc, agents_not_carrying_shelves_id, uncarried_requested_shelves_loc)
 
+    '''
     if len(agents_carrying_shelves_loc):
         dist_agents_carrying_shelves_goals = compute_dist_agents_targets(agents_carrying_shelves_loc, goals_loc)
         dist_agents_carrying_shelves_goals = np.array(dist_agents_carrying_shelves_goals)
@@ -157,16 +158,23 @@ def cbs_planning(warehouse):
         goals_agents_carrying_shelves = goals_loc
         agents += [{'start': agents_carrying_shelves_loc[i], 'goal': goals_agents_carrying_shelves[i], \
             'name': names_agents_carrying_shelves[i]} for i in range(len(agents_carrying_shelves_loc))]
+    '''
+
+    while len(agents_carrying_shelves_loc):
+        agents, agents_carrying_shelves_loc, agents_carrying_shelves_id, goals_loc = \
+            assign_target_to_agent(agents, agents_carrying_shelves_loc, agents_carrying_shelves_id, goals_loc)
         
-        ## Add obstacles for agents carrying shelves
+    '''
+    ## Add obstacles for agents carrying shelves
     nearby_carrying_shelves_loc = []
     for i in range(len(agents_carrying_shelves_loc)):
         nearby_carrying_shelves_loc.append([agents_carrying_shelves_loc[i][0]-1, agents_carrying_shelves_loc[i][1]])
         nearby_carrying_shelves_loc.append([agents_carrying_shelves_loc[i][0], agents_carrying_shelves_loc[i][1]-1])
         nearby_carrying_shelves_loc.append([agents_carrying_shelves_loc[i][0]+1, agents_carrying_shelves_loc[i][1]])
         nearby_carrying_shelves_loc.append([agents_carrying_shelves_loc[i][0], agents_carrying_shelves_loc[i][1]+1])
-
-    # print('Nearby carrying shelves:', nearby_carrying_shelves_loc)
+    # print('Nearby carrying shelves:', nearby_carrying_shelves_loc)    
+    '''
+    
     _, shelves_loc = shelf_ids_coordinates(warehouse, warehouse.shelfs)
     # print('Shelves:', shelves_loc)
     # for shelf_loc in nearby_carrying_shelves_loc:
@@ -255,7 +263,7 @@ def get_action(Direction, plan, t):
             direction = [1, 4, 4]
     elif Action == 0: 
         action = [0]
-        direction = Direction[-1]
+        direction = [Direction[-1]]
  
     return action, direction
 
