@@ -164,7 +164,7 @@ def cbs_planning(warehouse):
         agents, agents_carrying_shelves_loc, agents_carrying_shelves_id, goals_loc = \
             assign_target_to_agent(agents, agents_carrying_shelves_loc, agents_carrying_shelves_id, goals_loc)
         
-    '''
+    
     ## Add obstacles for agents carrying shelves
     nearby_carrying_shelves_loc = []
     for i in range(len(agents_carrying_shelves_loc)):
@@ -173,7 +173,7 @@ def cbs_planning(warehouse):
         nearby_carrying_shelves_loc.append([agents_carrying_shelves_loc[i][0]+1, agents_carrying_shelves_loc[i][1]])
         nearby_carrying_shelves_loc.append([agents_carrying_shelves_loc[i][0], agents_carrying_shelves_loc[i][1]+1])
     # print('Nearby carrying shelves:', nearby_carrying_shelves_loc)    
-    '''
+    
     
     _, shelves_loc = shelf_ids_coordinates(warehouse, warehouse.shelfs)
     # print('Shelves:', shelves_loc)
