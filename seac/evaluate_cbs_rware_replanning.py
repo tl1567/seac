@@ -153,8 +153,8 @@ def cbs_planning(warehouse):
         dist_agents_carrying_shelves_goals = np.array(dist_agents_carrying_shelves_goals)
         ind = np.argmin(dist_agents_carrying_shelves_goals, axis=1)
         names_agents_carrying_shelves = [f'agent{agents_carrying_shelves_id[i]}' for i in range(len(agents_carrying_shelves_id))]
-        # goals_agents_carrying_shelves = [goals_loc[i] for i in ind]
-        goals_agents_carrying_shelves = goals_loc
+        goals_agents_carrying_shelves = [goals_loc[i] for i in ind]
+        # goals_agents_carrying_shelves = goals_loc
         agents += [{'start': agents_carrying_shelves_loc[i], 'goal': goals_agents_carrying_shelves[i], \
             'name': names_agents_carrying_shelves[i]} for i in range(len(agents_carrying_shelves_loc))]
         
@@ -171,18 +171,19 @@ def cbs_planning(warehouse):
     # print('Shelves:', shelves_loc)
     # for shelf_loc in nearby_carrying_shelves_loc:
     for shelf_loc in shelves_loc:
-        # if shelf_loc not in agents_carrying_shelves_loc and shelf_loc not in agents_not_carrying_shelves_loc \
-            # and shelf_loc not in requested_shelves_loc:
+        if shelf_loc not in agents_carrying_shelves_loc and shelf_loc not in agents_not_carrying_shelves_loc \
+            and shelf_loc not in requested_shelves_loc:
         # if shelf_loc in nearby_carrying_shelves_loc and shelf_loc not in requested_shelves_loc:
-        if shelf_loc not in requested_shelves_loc:
+        # if shelf_loc not in requested_shelves_loc:
         # if shelf_loc in shelves_loc:
             obstacles.append(shelf_loc)
 
+    obstacles = [tuple(obstacle) for obstacle in obstacles]
         
 
     # sort_func = lambda z : z['name']
     # agents.sort(key=sort_func)
-    print('Agents:', agents)
+    # print('Agents:', agents)
     # print('Obstacles:', obstacles)
     
     
@@ -295,12 +296,19 @@ def actions_from_replan(directions_dict, plan):
     for i in range(len(actions_from_plan_dict)):
         if len(actions_from_plan_dict[f'agent{i+1}']) == min_len_actions:
             actions_from_plan_dict[f'agent{i+1}'].append(4)
+            # actions_from_plan_dict[f'agent{i+1}'] += [4, 0]
+        else:
+            actions_from_plan_dict[f'agent{i+1}'][:] = actions_from_plan_dict[f'agent{i+1}'][0:min_len_actions]
+            actions_from_plan_dict[f'agent{i+1}'].append(0)
         # while len(actions_from_plan_dict[f'agent{i+1}']) < max_len_actions + 3:
         #     actions_from_plan_dict[f'agent{i+1}'].append(0)
     
     # print('plan:', plan)
     for i in range(len(directions_dict)):
         if len(directions_dict[f'agent{i+1}']) == min_len_actions + 1:
+            directions_dict[f'agent{i+1}'].append(directions_dict[f'agent{i+1}'][-1])
+        else: 
+            directions_dict[f'agent{i+1}'][:] + directions_dict[f'agent{i+1}'][0:min_len_actions+1]
             directions_dict[f'agent{i+1}'].append(directions_dict[f'agent{i+1}'][-1])
         # while len(directions_dict[f'agent{i+1}']) < max_len_actions + 4:
         #     directions_dict[f'agent{i+1}'].append(directions_dict[f'agent{i+1}'][-1])
@@ -310,7 +318,7 @@ def actions_from_replan(directions_dict, plan):
     for i in range(len(actions_from_plan_dict)):
         actions_from_plan_dict[f'agent{i+1}'][:] = actions_from_plan_dict[f'agent{i+1}'][0:min_len_actions+1]
     for i in range(len(directions_dict)):
-        directions_dict[f'agent{i+1}'][:] = directions_dict[f'agent{i+1}'][0:min_len_actions+2]
+        directions_dict[f'agent{i+1}'][:] = directions_dict[f'agent{i+1}'][1:min_len_actions+2]
 
     return actions_from_plan_dict, directions_dict
 
@@ -365,7 +373,8 @@ def main(_):
     actions_from_plan = [actions_from_plan_dict[f'agent{i+1}'] for i in range(len(actions_from_plan_dict))]
     directions = [directions_dict[f'agent{i+1}'] for i in range(len(directions_dict))]
 
-
+    # print('Actions from plan:', actions_from_plan)
+    # print("Directions from plan:", directions)
     for i in range(RUN_STEPS):
     # total_steps = 0
     # while total_steps < RUN_STEPS:
@@ -383,23 +392,8 @@ def main(_):
         # for i in range(len(actions_from_plan[0])):
         # print('Actions from plan:', actions_from_plan)
         # if any(actions_from_plan[k][-1] == 4 for k in range(len(actions_from_plan))):
-        print('Actions from plan:', actions_from_plan)
-        min_len_actions = min([len(actions_from_plan[k]) for k in range(len(actions_from_plan))])
-        if i == min_len_actions - 1:
-            plan = cbs_planning(env)
-            # init_directions_dict = {f'agent{k+1}': [directions_dict[f'agent{k+1}'][-1]] for k in range(len(directions_dict))}
-            # init_directions_dict = {f'agent{i+1}': [int(np.where(obs[i][3:7] == 1)[0] + 1)] for i in range(len(obs))}
-            actions_from_plan_dict, directions_dict = actions_from_replan(directions_dict, plan)
-            # print(actions_from_plan_dict)
-            # print(directions_dict)
-            for k in range(len(actions_from_plan)):
-                actions_from_plan[k] += actions_from_plan_dict[f'agent{k+1}']
-                directions[k] += directions_dict[f'agent{k+1}']
-                # print('length', len(actions_from_plan[k]))
-
-            # print('i:', i)
-            # print("Actions:", actions_from_plan)
-            # print("Directions:", directions)
+        # print('Actions from plan:', actions_from_plan)
+        
             
 
         actions = [actions_from_plan[k][i] for k in range(len(actions_from_plan))]
@@ -413,6 +407,27 @@ def main(_):
         # else:
         #     time.sleep(5)
         obs, _, done, info = env.step(actions)
+        
+        # print([directions[k][i] for k in range(len(directions))])
+        # print({f'agent{i+1}': [int(np.where(obs[i][3:7] == 1)[0] + 1)] for i in range(len(obs))})
+
+        min_len_actions = min([len(actions_from_plan[k]) for k in range(len(actions_from_plan))])
+        if i == min_len_actions - 1:
+            init_directions_dict = {f'agent{i+1}': [int(np.where(obs[i][3:7] == 1)[0] + 1)] for i in range(len(obs))}
+            plan = cbs_planning(env)
+            # init_directions_dict = {f'agent{k+1}': [directions_dict[f'agent{k+1}'][-1]] for k in range(len(directions_dict))}
+            # init_directions_dict = {f'agent{i+1}': [int(np.where(obs[i][3:7] == 1)[0] + 1)] for i in range(len(obs))}
+            actions_from_plan_dict, directions_dict = actions_from_replan(init_directions_dict, plan)
+            # print(actions_from_plan_dict)
+            # print(directions_dict)
+            for k in range(len(actions_from_plan)):
+                actions_from_plan[k] += actions_from_plan_dict[f'agent{k+1}']
+                directions[k] += directions_dict[f'agent{k+1}']
+                # print('length', len(actions_from_plan[k]))
+
+            # print('Actions from plan:', actions_from_plan)
+            # print("Directions from plan:", directions)
+
 
         
         # actions_from_plan = [actions_from_plan_dict[f'agent{i+1}'] for i in range(len(actions_from_plan_dict))]
