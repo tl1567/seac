@@ -196,7 +196,7 @@ def cbs_planning(warehouse):
     cbs = CBS(env)
     solution = cbs.search()
     if not solution:
-        print("Conflict-based search (CBS) planning cannot find any solution!")
+        print("Conflict-based search (CBS) (re)planning cannot find any solution!")
         return
 
     return solution
