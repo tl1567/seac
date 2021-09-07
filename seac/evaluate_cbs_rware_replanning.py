@@ -400,7 +400,7 @@ def main(_):
         # print('Actions:', actions)
         env.render()
 
-        time.sleep(1)
+        time.sleep(0.75)
         # if i < RUN_STEPS + 1:
         #     time.sleep(1)
         # else:
