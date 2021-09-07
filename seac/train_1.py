@@ -60,6 +60,7 @@ def config():
     save_interval = int(1e6)
     eval_interval = int(1e6)
     episodes_per_eval = 8
+    #device = 'cuda:0'
 
 
 for conf in glob.glob("configs/*.yaml"):
@@ -89,6 +90,7 @@ def evaluate(
     time_limit,
     algorithm,
     _log,
+    #device,
 ):
     device = algorithm["device"]
 
@@ -185,6 +187,7 @@ def main(
         time_limit,
         wrappers,
         algorithm["device"],
+        #device,
     )
     
     agents = [
@@ -196,6 +199,7 @@ def main(
     for i in range(len(obs)):
         agents[i].storage.obs[0].copy_(obs[i])
         agents[i].storage.to(algorithm["device"])
+        #agents[i].storage.to(device)
 
     start = time.time()
     num_updates = (
