@@ -400,11 +400,8 @@ def main(_):
         # print('Actions:', actions)
         env.render()
 
-        time.sleep(0.75)
-        # if i < RUN_STEPS + 1:
-        #     time.sleep(1)
-        # else:
-        #     time.sleep(5)
+        time.sleep(1)
+
         obs, _, done, info = env.step(actions)
         
         # print([directions[k][i] for k in range(len(directions))])
@@ -440,12 +437,12 @@ def main(_):
 
         
         
-        # if all(done):
-        #     obs = env.reset()
-        #     print("--- Episode Finished ---")
-        #     print(f"Episode rewards: {sum(info['episode_reward'])}")
-        #     print(info)
-        #     print(" --- ")
+        if all(done):
+            obs = env.reset()
+            print("--- Episode Finished ---")
+            print(f"Episode rewards: {sum(info['episode_reward'])}")
+            print(info)
+            print(" --- ")
 
 if __name__ == "__main__":
     app.run(main)
