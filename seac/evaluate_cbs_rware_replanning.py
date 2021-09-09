@@ -9,6 +9,7 @@ from wrappers import RecordEpisodeStatistics, TimeLimit
 import time
 
 import numpy as np
+import pandas as pd
 
 from cbs_rware import Environment, CBS
 
@@ -20,6 +21,7 @@ FLAGS = flags.FLAGS
 # flags.DEFINE_string("path", "pretrained/rware-small-4ag", "path of the model file")
 flags.DEFINE_string("env_name", "rware-tiny-2ag-v1", "env name")
 flags.DEFINE_integer("time_limit", 500, "maximum number of timesteps for each episode")
+flags.DEFINE_integer("seed", 1, "seed")
 # path = "pretrained/rware-small-4ag"
 # env_name = "rware-tiny-2ag-v1"
 # time_limit = 500 # 25 for LBF
@@ -325,12 +327,15 @@ def main(_):
     # path = FLAGS.path
     env_name = FLAGS.env_name
     time_limit = FLAGS.time_limit
+    seed = FLAGS.seed
 
     RUN_STEPS = 2000
 
     env = gym.make(env_name)
     env = TimeLimit(env, time_limit)
     env = RecordEpisodeStatistics(env)
+
+    env.seed(seed)
 
     device = "cpu"
     # device = "cuda:0"
@@ -433,9 +438,7 @@ def main(_):
 
         # print([agent.carrying_shelf for agent in env.agents])
         # print([agent.has_delivered for agent in env.agents])
-
-
-        
+       
         
         if all(done):
             obs = env.reset()
@@ -443,6 +446,10 @@ def main(_):
             print(f"Episode rewards: {sum(info['episode_reward'])}")
             print(info)
             print(" --- ")
+
+    
+
+    pd.DataFrame(actions_from_plan).to_csv(f'./results/CBS/actions_{env_name}_seed{seed}.csv', index=False, header=False)
 
 if __name__ == "__main__":
     app.run(main)
