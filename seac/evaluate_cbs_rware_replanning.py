@@ -9,6 +9,7 @@ from wrappers import RecordEpisodeStatistics, TimeLimit
 import time
 
 import numpy as np
+import pandas as pd
 
 from cbs_rware import Environment, CBS
 
@@ -20,6 +21,7 @@ FLAGS = flags.FLAGS
 # flags.DEFINE_string("path", "pretrained/rware-small-4ag", "path of the model file")
 flags.DEFINE_string("env_name", "rware-tiny-2ag-v1", "env name")
 flags.DEFINE_integer("time_limit", 500, "maximum number of timesteps for each episode")
+flags.DEFINE_integer("seed", 1, "seed")
 # path = "pretrained/rware-small-4ag"
 # env_name = "rware-tiny-2ag-v1"
 # time_limit = 500 # 25 for LBF
@@ -325,12 +327,15 @@ def main(_):
     # path = FLAGS.path
     env_name = FLAGS.env_name
     time_limit = FLAGS.time_limit
+    seed = FLAGS.seed
 
     RUN_STEPS = 2000
 
     env = gym.make(env_name)
     env = TimeLimit(env, time_limit)
     env = RecordEpisodeStatistics(env)
+
+    env.seed(seed)
 
     device = "cpu"
     # device = "cuda:0"
@@ -400,11 +405,8 @@ def main(_):
         # print('Actions:', actions)
         env.render()
 
-        time.sleep(0.75)
-        # if i < RUN_STEPS + 1:
-        #     time.sleep(1)
-        # else:
-        #     time.sleep(5)
+        time.sleep(1)
+
         obs, _, done, info = env.step(actions)
         
         # print([directions[k][i] for k in range(len(directions))])
@@ -436,16 +438,18 @@ def main(_):
 
         # print([agent.carrying_shelf for agent in env.agents])
         # print([agent.has_delivered for agent in env.agents])
-
-
+       
         
-        
-        # if all(done):
-        #     obs = env.reset()
-        #     print("--- Episode Finished ---")
-        #     print(f"Episode rewards: {sum(info['episode_reward'])}")
-        #     print(info)
-        #     print(" --- ")
+        if all(done):
+            obs = env.reset()
+            print("--- Episode Finished ---")
+            print(f"Episode rewards: {sum(info['episode_reward'])}")
+            print(info)
+            print(" --- ")
+            pd.DataFrame(actions_from_plan).to_csv(f'./results/CBS/actions_{env_name}_seed{seed}_episode{i+1}.csv', index=False, header=False)
+            pd.DataFrame(info['episode_reward']).to_csv(f'./results/CBS/rewards_{env_name}_seed{seed}_episode{i+1}.csv', index=False, header=False)
+            pd.DataFrame([info['episode_time']]).to_csv(f'./results/CBS/time_{env_name}_seed{seed}_episode{i+1}.csv', index=False, header=False)
+
 
 if __name__ == "__main__":
     app.run(main)
