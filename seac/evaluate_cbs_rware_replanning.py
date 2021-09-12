@@ -446,9 +446,9 @@ def main(_):
             print(f"Episode rewards: {sum(info['episode_reward'])}")
             print(info)
             print(" --- ")
-            pd.DataFrame(actions_from_plan).to_csv(f'./results/CBS/actions_{env_name}_seed{seed}_episode{i+1}.csv', index=False, header=False)
-            pd.DataFrame(info['episode_reward']).to_csv(f'./results/CBS/rewards_{env_name}_seed{seed}_episode{i+1}.csv', index=False, header=False)
-            pd.DataFrame([info['episode_time']]).to_csv(f'./results/CBS/time_{env_name}_seed{seed}_episode{i+1}.csv', index=False, header=False)
+            pd.DataFrame(actions_from_plan).to_csv(f'./results/CBS/{env_name}/actions_{env_name}_seed{seed}_episode{i+1}.csv', index=False, header=False)
+            pd.DataFrame(info['episode_reward']).to_csv(f'./results/CBS/{env_name}/rewards_{env_name}_seed{seed}_episode{i+1}.csv', index=False, header=False)
+            pd.DataFrame([info['episode_time']]).to_csv(f'./results/CBS/{env_name}/time_{env_name}_seed{seed}_episode{i+1}.csv', index=False, header=False)
 
 
 if __name__ == "__main__":
