@@ -11,13 +11,13 @@ flags.DEFINE_string("env_name", "rware-small-5ag-v1", "env name")
 
 
 def main(_):
-    actions_paths = [f'./results/CBS/actions_{FLAGS.env_name}_seed{i}_episode{j}.csv' \
+    actions_paths = [f'./results/CBS/{FLAGS.env_name}/actions_{FLAGS.env_name}_seed{i}_episode{j}.csv' \
         for i in range(4) for j in [500, 1000, 1500, 2000]]
 
-    rewards_paths = [f'./results/CBS/rewards_{FLAGS.env_name}_seed{i}_episode{j}.csv' \
+    rewards_paths = [f'./results/CBS/{FLAGS.env_name}/rewards_{FLAGS.env_name}_seed{i}_episode{j}.csv' \
         for i in range(4) for j in [500, 1000, 1500, 2000]]
     
-    time_paths = [f'./results/CBS/time_{FLAGS.env_name}_seed{i}_episode{j}.csv' \
+    time_paths = [f'./results/CBS/{FLAGS.env_name}/time_{FLAGS.env_name}_seed{i}_episode{j}.csv' \
         for i in range(4) for j in [500, 1000, 1500, 2000]]
 
     actions = np.array([])
