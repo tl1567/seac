@@ -16,6 +16,8 @@ from cbs_rware import Environment, CBS
 from absl import app
 from absl import flags
 
+import os
+
 FLAGS = flags.FLAGS
 
 # flags.DEFINE_string("path", "pretrained/rware-small-4ag", "path of the model file")
@@ -441,6 +443,7 @@ def main(_):
        
         
         if all(done):
+            os.makedirs(os.path.dirname(f'./results/CBS/{env_name}/'), exist_ok=True)
             obs = env.reset()
             print("--- Episode Finished ---")
             print(f"Episode rewards: {sum(info['episode_reward'])}")
