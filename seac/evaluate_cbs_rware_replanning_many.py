@@ -38,6 +38,8 @@ _COLLISION_LAYERS = 2
 _LAYER_AGENTS = 0
 _LAYER_SHELFS = 1
 
+eventlet.monkey_patch()
+
 
 def shelf_ids_coordinates(env, shelf_list):
         """
@@ -340,7 +342,6 @@ def main(_):
     time_limit = FLAGS.time_limit
     seed = FLAGS.seed
 
-    replanning_time_limit = 10
 
     RUN_STEPS = 2000
 
@@ -428,15 +429,7 @@ def main(_):
         min_len_actions = min([len(actions_from_plan[k]) for k in range(len(actions_from_plan))])
         if i == min_len_actions - 1:
             init_directions_dict = {f'agent{i+1}': [int(np.where(obs[i][3:7] == 1)[0] + 1)] for i in range(len(obs))}
-            start_time = time.time()
-            plan = None
-            with eventlet.Timeout(replanning_time_limit, False):
-                plan = cbs_planning(env)
-                eventlet.sleep(0)
-            if plan is None:
-                print(f'Over replanning time limit of {replanning_time_limit} seconds! Unsuccessful! ')
-                break
-            print(time.time() - start_time)
+            plan = cbs_planning(env)            
             # init_directions_dict = {f'agent{k+1}': [directions_dict[f'agent{k+1}'][-1]] for k in range(len(directions_dict))}
             # init_directions_dict = {f'agent{i+1}': [int(np.where(obs[i][3:7] == 1)[0] + 1)] for i in range(len(obs))}
             actions_from_plan_dict, directions_dict = actions_from_replan(init_directions_dict, plan)
