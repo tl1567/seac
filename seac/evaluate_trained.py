@@ -46,18 +46,27 @@ def main(_):
     obs = env.reset()
 
     for i in range(RUN_STEPS):
+        actions_list = []
         obs = [torch.from_numpy(o) for o in obs]
         _, actions, _ , _ = zip(*[agent.model.act(obs[agent.agent_id], None, None) for agent in agents])
         actions = [a.item() for a in actions]
         time.sleep(1)
         env.render()
         obs, _, done, info = env.step(actions)
+
+        actions_list.append(actions)
+
         if all(done):
             obs = env.reset()
             print("--- Episode Finished ---")
             print(f"Episode rewards: {sum(info['episode_reward'])}")
             print(info)
             print(" --- ")
+            actions_list = np.transpose(np.array(actions_list))
+            os.makedirs(os.path.dirname(f'./results/SEAC/{env_name}/'), exist_ok=True)
+            pd.DataFrame(actions_list).to_csv(f'./results/SEAC/{env_name}/actions_{env_name}_seed{seed}_episode{i+1}.csv', index=False, header=False)
+            pd.DataFrame(info['episode_reward']).to_csv(f'./results/SEAC/{env_name}/rewards_{env_name}_seed{seed}_episode{i+1}.csv', index=False, header=False)
+            pd.DataFrame([info['episode_time']]).to_csv(f'./results/SEAC/{env_name}/time_{env_name}_seed{seed}_episode{i+1}.csv', index=False, header=False)
 
 if __name__ == "__main__":
     app.run(main)
