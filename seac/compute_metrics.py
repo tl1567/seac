@@ -73,9 +73,9 @@ def main(_):
     std_time = np.std(time, ddof=1)
     std_num_delivered = np.std(num_delivered, ddof=1)
 
-    print(f'Mean reward per agent (s.d.): {mean_reward:.2f} ({std_reward:.2f})')
+    print(f'Mean reward per agent per episode (s.d.): {mean_reward:.2f} ({std_reward:.2f})')
     print(f'Mean episode time (s.d.): {mean_time:.2f} ({std_time:.2f})')
-    print(f'Mean number of delivered items per agent (s.d.): {mean_num_delivered:.2f} ({std_num_delivered:.2f})')
+    print(f'Mean number of delivered items per agent per episode (s.d.): {mean_num_delivered:.2f} ({std_num_delivered:.2f})')
 
 if __name__ == "__main__":
     app.run(main)
