@@ -442,13 +442,13 @@ def main(_):
         # print([agent.has_delivered for agent in env.agents])
        
         
-        if all(done):
-            os.makedirs(os.path.dirname(f'./results/CBS/{env_name}/'), exist_ok=True)
+        if all(done):            
             obs = env.reset()
             print("--- Episode Finished ---")
             print(f"Episode rewards: {sum(info['episode_reward'])}")
             print(info)
             print(" --- ")
+            os.makedirs(os.path.dirname(f'./results/CBS/{env_name}/'), exist_ok=True)
             pd.DataFrame(actions_from_plan).to_csv(f'./results/CBS/{env_name}/actions_{env_name}_seed{seed}_episode{i+1}.csv', index=False, header=False)
             pd.DataFrame(info['episode_reward']).to_csv(f'./results/CBS/{env_name}/rewards_{env_name}_seed{seed}_episode{i+1}.csv', index=False, header=False)
             pd.DataFrame([info['episode_time']]).to_csv(f'./results/CBS/{env_name}/time_{env_name}_seed{seed}_episode{i+1}.csv', index=False, header=False)

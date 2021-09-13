@@ -13,9 +13,10 @@ from absl import flags
 
 FLAGS = flags.FLAGS
 
-flags.DEFINE_string("path", 'results/trained_models/002/u80000', "path of the model file")
-flags.DEFINE_string("env_name", "rware-tiny-2ag-v1", "env name")
+flags.DEFINE_string("path", 'results/trained_models/95/u80000', "path of the model file")
+flags.DEFINE_string("env_name", "rware-small-5ag-v1", "env name")
 flags.DEFINE_integer("time_limit", 500, "maximum number of timesteps for each episode")
+flags.DEFINE_integer("seed", 1, "seed")
 # path = 'results/trained_models/002/u80000'
 # env_name = "rware-tiny-2ag-v1"
 # time_limit = 500 # 25 for LBF
@@ -25,12 +26,15 @@ def main(_):
     path = FLAGS.path
     env_name = FLAGS.env_name
     time_limit = FLAGS.time_limit
+    seed = FLAGS.seed
 
     RUN_STEPS = 2000
 
     env = gym.make(env_name)
     env = TimeLimit(env, time_limit)
     env = RecordEpisodeStatistics(env)
+
+    env.seed(seed)
 
     device = "cpu"
     # device = "cuda:0"
