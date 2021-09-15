@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd 
 
 import matplotlib
-matplotlib.use('TkAgg')
+# matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 # import json
 
@@ -25,11 +25,21 @@ def main(_):
     plt.plot(df_agent0["steps"], df_agent0["values"])
     plt.show()
 
-
     df_agent1 = df["agent1/episode_reward"]
     plt.plot(df_agent1["steps"], df_agent1["values"])
     plt.show()
 
+    df_agent1 = df["agent2/episode_reward"]
+    plt.plot(df_agent1["steps"], df_agent1["values"])
+    plt.show()
+
+    df_agent1 = df["agent3/episode_reward"]
+    plt.plot(df_agent1["steps"], df_agent1["values"])
+    plt.show()
+
+    df_agent1 = df["agent4/episode_reward"]
+    plt.plot(df_agent1["steps"], df_agent1["values"])
+    plt.show()
 
 if __name__ == "__main__":
     app.run(main)
