@@ -63,8 +63,8 @@ def main(_):
         env.render()
         obs, _, done, info = env.step(actions)
         
-        print(actions)
         actions_list.append(actions)
+        print(actions_list)
 
         if all(done):
             obs = env.reset()
