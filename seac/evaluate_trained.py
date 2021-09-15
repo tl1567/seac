@@ -75,6 +75,7 @@ def main(_):
             pd.DataFrame(actions_list).to_csv(f'./results/SEAC/{env_name}/actions_{env_name}_seed{seed}_episode{i+1}.csv', index=False, header=False)
             pd.DataFrame(info['episode_reward']).to_csv(f'./results/SEAC/{env_name}/rewards_{env_name}_seed{seed}_episode{i+1}.csv', index=False, header=False)
             pd.DataFrame([info['episode_time']]).to_csv(f'./results/SEAC/{env_name}/time_{env_name}_seed{seed}_episode{i+1}.csv', index=False, header=False)
+            actions_list = []
 
 if __name__ == "__main__":
     app.run(main)
