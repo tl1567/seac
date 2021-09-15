@@ -54,8 +54,9 @@ def main(_):
 
     obs = env.reset()
 
+    actions_list = []
     for i in range(RUN_STEPS):
-        actions_list = []
+        
         obs = [torch.from_numpy(o) for o in obs]
         _, actions, _ , _ = zip(*[agent.model.act(obs[agent.agent_id], None, None) for agent in agents])
         actions = [a.item() for a in actions]
