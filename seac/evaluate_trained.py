@@ -63,7 +63,7 @@ def main(_):
         env.render()
         obs, _, done, info = env.step(actions)
         
-        prin(actions)
+        print(actions)
         actions_list.append(actions)
 
         if all(done):
