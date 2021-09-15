@@ -23,23 +23,23 @@ def main(_):
 
     if FLAGS.alg == "planning":
         actions_paths = [f'./results/CBS/actions_{FLAGS.env_name}_seed{i}_episode{j}.csv' \
-            for i in range(4) for j in [500, 1000, 1500, 2000]]
+            for i in range(5) for j in [500, 1000, 1500, 2000]]
 
         rewards_paths = [f'./results/CBS/rewards_{FLAGS.env_name}_seed{i}_episode{j}.csv' \
-            for i in range(4) for j in [500, 1000, 1500, 2000]]
+            for i in range(5) for j in [500, 1000, 1500, 2000]]
         
         time_paths = [f'./results/CBS/time_{FLAGS.env_name}_seed{i}_episode{j}.csv' \
-            for i in range(4) for j in [500, 1000, 1500, 2000]]
+            for i in range(5) for j in [500, 1000, 1500, 2000]]
 
     elif FLAGS.alg == "rl":
         actions_paths = [f'./results/SEAC/actions_{FLAGS.env_name}_seed{i}_episode{j}.csv' \
-            for i in range(4) for j in [500, 1000, 1500, 2000]]
+            for i in range(5) for j in [500, 1000, 1500, 2000]]
 
         rewards_paths = [f'./results/SEAC/rewards_{FLAGS.env_name}_seed{i}_episode{j}.csv' \
-            for i in range(4) for j in [500, 1000, 1500, 2000]]
+            for i in range(5) for j in [500, 1000, 1500, 2000]]
         
         time_paths = [f'./results/SEAC/time_{FLAGS.env_name}_seed{i}_episode{j}.csv' \
-            for i in range(4) for j in [500, 1000, 1500, 2000]]
+            for i in range(5) for j in [500, 1000, 1500, 2000]]
 
     actions = []
     rewards = np.array([])
