@@ -63,19 +63,42 @@ def main(_):
             num_delivered = np.append(num_delivered, np.count_nonzero(action[i] == 4) // 2)
 
     # success_rate = 
+    def getDeliveryTime(x: np.ndarray):
+        time = []
+        for i in range(x.shape[0]):
+            t = [j for j, v in enumerate(x[i,:]) if v == 4][1] if np.count_nonzero(x[i,:] == 4) >= 2 else 0
+            time.append(t)
+        return time
+
+    # the sum of delivery times of all agents at their delivery locations
+    flowtime = np.array([])
+    for action in actions:
+        flowtime = np.append(flowtime, sum(getDeliveryTime(action)))
+
+    # the maximum of the delivery times of all agents at their delivery locations
+    makespan = np.array([])
+    for action in actions:
+        makespan = np.append(makespan, max(getDeliveryTime(actions)))
 
 
     mean_reward = np.mean(rewards)
     mean_time = np.mean(time)
     mean_num_delivered = np.mean(num_delivered)
+    mean_flowtime = np.mean(flowtime)
+    mean_makespan = np.mean(makespan)
 
     std_reward = np.std(rewards, ddof=1)
     std_time = np.std(time, ddof=1)
     std_num_delivered = np.std(num_delivered, ddof=1)
+    std_flowtime = np.mean(flowtime, ddof=1)
+    std_makespan = np.mean(makespan, ddof=1)
+    
 
     print(f'Mean reward per agent per episode (s.d.): {mean_reward:.2f} ({std_reward:.2f})')
     print(f'Mean episode time (s.d.): {mean_time:.2f} ({std_time:.2f})')
     print(f'Mean number of delivered items per agent per episode (s.d.): {mean_num_delivered:.2f} ({std_num_delivered:.2f})')
+    print(f'Mean flowtime per episode (s.d.): {mean_flowtime:.2f} ({std_flowtime:.2f})')
+    print(f'Mean makespan per episode (s.d.): {mean_makespan:.2f} ({std_makespan:.2f})')
 
 if __name__ == "__main__":
     app.run(main)
