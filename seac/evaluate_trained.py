@@ -61,10 +61,8 @@ def main(_):
         actions = [a.item() for a in actions]
         time.sleep(1)
         env.render()
-        obs, _, done, info = env.step(actions)
-        
+        obs, _, done, info = env.step(actions)        
         actions_list.append(actions)
-        print(actions_list)
 
         if all(done):
             obs = env.reset()
