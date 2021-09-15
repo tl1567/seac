@@ -22,23 +22,23 @@ def main(_):
     #     for i in range(4) for j in [500, 1000, 1500, 2000]]
 
     if FLAGS.alg == "planning":
-        actions_paths = [f'./results/CBS/actions_{FLAGS.env_name}_seed{i}_episode{j}.csv' \
+        actions_paths = [f'./results/CBS/{FLAGS.env_name}/actions_{FLAGS.env_name}_seed{i}_episode{j}.csv' \
             for i in range(5) for j in [500, 1000, 1500, 2000]]
 
-        rewards_paths = [f'./results/CBS/rewards_{FLAGS.env_name}_seed{i}_episode{j}.csv' \
+        rewards_paths = [f'./results/CBS/{FLAGS.env_name}/rewards_{FLAGS.env_name}_seed{i}_episode{j}.csv' \
             for i in range(5) for j in [500, 1000, 1500, 2000]]
         
-        time_paths = [f'./results/CBS/time_{FLAGS.env_name}_seed{i}_episode{j}.csv' \
+        time_paths = [f'./results/CBS/{FLAGS.env_name}/time_{FLAGS.env_name}_seed{i}_episode{j}.csv' \
             for i in range(5) for j in [500, 1000, 1500, 2000]]
 
     elif FLAGS.alg == "rl":
-        actions_paths = [f'./results/SEAC/actions_{FLAGS.env_name}_seed{i}_episode{j}.csv' \
+        actions_paths = [f'./results/SEAC/{FLAGS.env_name}/actions_{FLAGS.env_name}_seed{i}_episode{j}.csv' \
             for i in range(5) for j in [500, 1000, 1500, 2000]]
 
-        rewards_paths = [f'./results/SEAC/rewards_{FLAGS.env_name}_seed{i}_episode{j}.csv' \
+        rewards_paths = [f'./results/SEAC/{FLAGS.env_name}/rewards_{FLAGS.env_name}_seed{i}_episode{j}.csv' \
             for i in range(5) for j in [500, 1000, 1500, 2000]]
         
-        time_paths = [f'./results/SEAC/time_{FLAGS.env_name}_seed{i}_episode{j}.csv' \
+        time_paths = [f'./results/SEAC/{FLAGS.env_name}/time_{FLAGS.env_name}_seed{i}_episode{j}.csv' \
             for i in range(5) for j in [500, 1000, 1500, 2000]]
 
     actions = []
