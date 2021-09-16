@@ -17,8 +17,10 @@ flags.DEFINE_integer("n", 5, "number of agents")
 def main(_):
     path = FLAGS.path
     n = FLAGS.n
-    df = pd.read_json(path + "/metrics.json")
+    df = pd.read_json(f"{path}/metrics.json")
+    df_config = pd.read_json(f"{path}/config.json")
     # print(df)
+    env_name = df_config["env_name"]
 
     steps = df["agent0/episode_reward"]["steps"]
     df_agents = []
@@ -34,7 +36,7 @@ def main(_):
     plt.figure(n)
     plt.plot(steps, sum_df_agents)
     plt.title(f"Sum of rewards of all agents")
-    plt.savefig(f"{path}/total_reward.pdf", dpi=150)
+    plt.savefig(f"{path}/total_reward_{env_name}.pdf", dpi=150)
     plt.show()
     
 
