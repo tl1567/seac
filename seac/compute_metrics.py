@@ -73,13 +73,12 @@ def main(_):
     # the sum of delivery times of all agents at their delivery locations
     flowtime = np.array([])
     for action in actions:
-        print(action)
-        flowtime = np.append(flowtime, sum(getDeliveryTime(action)))
+        flowtime = np.append(flowtime, sum(getDeliveryTime(np.array(action))))
 
     # the maximum of the delivery times of all agents at their delivery locations
     makespan = np.array([])
     for action in actions:
-        makespan = np.append(makespan, max(getDeliveryTime(actions)))
+        makespan = np.append(makespan, max(getDeliveryTime(np.array(action))))
 
 
     mean_reward = np.mean(rewards)
