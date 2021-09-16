@@ -30,7 +30,7 @@ def main(_):
         plt.show()
     
     df_agents = np.array(df_agents)
-    print(df_df_agents)
+    print(df_agents)
     sum_df_agents = np.sum(df_agents, axis=0)
     plt.plot(steps, sum_df_agents)
     plt.show()
