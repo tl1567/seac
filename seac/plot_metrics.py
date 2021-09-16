@@ -34,8 +34,9 @@ def main(_):
     plt.figure(n)
     plt.plot(steps, sum_df_agents)
     plt.title(f"Sum of rewards of all agents")
-    plt.show()
     plt.savefig(f"{path}/total_reward.pdf", dpi=150)
+    plt.show()
+    
 
     # df_agent2 = df["agent2/episode_reward"]
     # plt.plot(df_agent2["steps"], df_agent2["values"])
