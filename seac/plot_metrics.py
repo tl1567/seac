@@ -20,7 +20,7 @@ def main(_):
     df = pd.read_json(path + "/metrics.json")
     # print(df)
 
-    steps = df_agent0["steps"]
+    steps = df["agent0/episode_reward"]["steps"]
     df_agents = []
     for i in range(n):
         df_agents.append(df[f"agent{i}/episode_reward"])
