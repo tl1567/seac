@@ -12,6 +12,7 @@ from absl import flags
 FLAGS = flags.FLAGS
 
 flags.DEFINE_string("path", "results/sacred/1", "path of the metrics json file")
+flags.DEFINE_integer("n", 5, "number of agents")
 
 
 def main(_):
@@ -19,27 +20,29 @@ def main(_):
     df = pd.read_json(path + "/metrics.json")
     # print(df)
 
-
-    df_agent0 = df["agent0/episode_reward"]
-    # print(df_agent0)
-    plt.plot(df_agent0["steps"], df_agent0["values"])
+    steps = df_agent0["steps"]
+    df_agents = []
+    for i in range(n):
+        df_agents.append(df[f"agent{i}/episode_reward"])
+        plt.plot(steps, df_agents[-1])
+        plt.show()
+    
+    df_agents = np.array(df_agents)
+    sum_df_agents = np.sum(df_agents, axis=1)
+    plt.plot(steps, sum_df_agents)
     plt.show()
 
-    df_agent1 = df["agent1/episode_reward"]
-    plt.plot(df_agent1["steps"], df_agent1["values"])
-    plt.show()
+    # df_agent2 = df["agent2/episode_reward"]
+    # plt.plot(df_agent2["steps"], df_agent2["values"])
+    # plt.show()
 
-    df_agent1 = df["agent2/episode_reward"]
-    plt.plot(df_agent1["steps"], df_agent1["values"])
-    plt.show()
+    # df_agent3 = df["agent3/episode_reward"]
+    # plt.plot(df_agent3["steps"], df_agent3["values"])
+    # plt.show()
 
-    df_agent1 = df["agent3/episode_reward"]
-    plt.plot(df_agent1["steps"], df_agent1["values"])
-    plt.show()
-
-    df_agent1 = df["agent4/episode_reward"]
-    plt.plot(df_agent1["steps"], df_agent1["values"])
-    plt.show()
+    # df_agent4 = df["agent4/episode_reward"]
+    # plt.plot(df_agent4["steps"], df_agent4["values"])
+    # plt.show()
 
 if __name__ == "__main__":
     app.run(main)
