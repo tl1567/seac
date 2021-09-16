@@ -17,6 +17,7 @@ flags.DEFINE_integer("n", 5, "number of agents")
 
 def main(_):
     path = FLAGS.path
+    n = FLAGS.n
     df = pd.read_json(path + "/metrics.json")
     # print(df)
 
