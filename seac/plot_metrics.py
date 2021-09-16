@@ -24,7 +24,7 @@ def main(_):
     steps = df["agent0/episode_reward"]["steps"]
     df_agents = []
     for i in range(n):
-        df_agents.append(df[f"agent{i}/episode_reward"])
+        df_agents.append(df[f"agent{i}/episode_reward"]["values"])
         plt.plot(steps, df_agents[-1])
         plt.show()
     
