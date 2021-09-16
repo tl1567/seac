@@ -90,8 +90,8 @@ def main(_):
     std_reward = np.std(rewards, ddof=1)
     std_time = np.std(time, ddof=1)
     std_num_delivered = np.std(num_delivered, ddof=1)
-    std_flowtime = np.mean(flowtime, ddof=1)
-    std_makespan = np.mean(makespan, ddof=1)
+    std_flowtime = np.std(flowtime, ddof=1)
+    std_makespan = np.dtd(makespan, ddof=1)
     
 
     print(f'Mean reward per agent per episode (s.d.): {mean_reward:.2f} ({std_reward:.2f})')
