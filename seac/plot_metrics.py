@@ -18,6 +18,7 @@ def main(_):
     path = FLAGS.path
     n = FLAGS.n
     df = pd.read_json(f"{path}/metrics.json")
+    print(df)
     df_config = pd.read_json(f"{path}/config.json")
     print(df_config)
     # print(df)
