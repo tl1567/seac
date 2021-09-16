@@ -4,7 +4,7 @@ import pandas as pd
 import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
-# import json
+plt.rcParams["font.family"] = "Times New Roman"
 
 from absl import app
 from absl import flags
