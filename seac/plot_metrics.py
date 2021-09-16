@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd 
 
+import json
+
 import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
@@ -18,7 +20,10 @@ def main(_):
     path = FLAGS.path
     n = FLAGS.n
     df = pd.read_json(f"{path}/metrics.json")
-    df_config = pd.read_json(f"{path}/config.json", orient='records')
+
+    with open(f"{path}/config.json") as json_file:
+        df_config = json.load(json_file)
+    
     env_name = df_config["env_name"]
 
     steps = df["agent0/episode_reward"]["steps"]
