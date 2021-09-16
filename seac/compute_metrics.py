@@ -73,6 +73,7 @@ def main(_):
     # the sum of delivery times of all agents at their delivery locations
     flowtime = np.array([])
     for action in actions:
+        print(action)
         flowtime = np.append(flowtime, sum(getDeliveryTime(action)))
 
     # the maximum of the delivery times of all agents at their delivery locations
