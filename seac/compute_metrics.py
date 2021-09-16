@@ -7,8 +7,12 @@ from absl import flags
 FLAGS = flags.FLAGS
 
 flags.DEFINE_string("env_name", "rware-small-5ag-v1", "env name")
-flags.DEFINE_string("alg", "planning", "planning or rl")
-
+flags.DEFINE_string("alg", "mapf", "mapf or marl")
+flags.DEFINE_integer("seed0", 0, "seed 0")
+flags.DEFINE_integer("seed1", 1, "seed 1")
+flags.DEFINE_integer("seed2", 2, "seed 2")
+flags.DEFINE_integer("seed3", 3, "seed 3")
+flags.DEFINE_integer("seed4", 4, "seed 4")
 
 
 def main(_):
@@ -21,25 +25,27 @@ def main(_):
     # time_paths = [f'./results/CBS/{FLAGS.env_name}/time_{FLAGS.env_name}_seed{i}_episode{j}.csv' \
     #     for i in range(4) for j in [500, 1000, 1500, 2000]]
 
-    if FLAGS.alg == "planning":
+    seeds = [FLAGS.seed0, FLAGS.seed1, FLAGS.seed2, FLAGS.seed3, FLAGS.seed4]
+
+    if FLAGS.alg == "mapf":
         actions_paths = [f'./results/CBS/{FLAGS.env_name}/actions_{FLAGS.env_name}_seed{i}_episode{j}.csv' \
-            for i in range(5) for j in [500, 1000, 1500, 2000]]
+            for i in seeds for j in [500, 1000, 1500, 2000]]
 
         rewards_paths = [f'./results/CBS/{FLAGS.env_name}/rewards_{FLAGS.env_name}_seed{i}_episode{j}.csv' \
-            for i in range(5) for j in [500, 1000, 1500, 2000]]
+            for i in seeds for j in [500, 1000, 1500, 2000]]
         
         time_paths = [f'./results/CBS/{FLAGS.env_name}/time_{FLAGS.env_name}_seed{i}_episode{j}.csv' \
-            for i in range(5) for j in [500, 1000, 1500, 2000]]
+            for i in seeds for j in [500, 1000, 1500, 2000]]
 
-    elif FLAGS.alg == "rl":
+    elif FLAGS.alg == "marl":
         actions_paths = [f'./results/SEAC/{FLAGS.env_name}/actions_{FLAGS.env_name}_seed{i}_episode{j}.csv' \
-            for i in range(5) for j in [500, 1000, 1500, 2000]]
+            for i in seeds for j in [500, 1000, 1500, 2000]]
 
         rewards_paths = [f'./results/SEAC/{FLAGS.env_name}/rewards_{FLAGS.env_name}_seed{i}_episode{j}.csv' \
-            for i in range(5) for j in [500, 1000, 1500, 2000]]
+            for i in seeds for j in [500, 1000, 1500, 2000]]
         
         time_paths = [f'./results/SEAC/{FLAGS.env_name}/time_{FLAGS.env_name}_seed{i}_episode{j}.csv' \
-            for i in range(5) for j in [500, 1000, 1500, 2000]]
+            for i in seeds for j in [500, 1000, 1500, 2000]]
 
     actions = []
     rewards = np.array([])
