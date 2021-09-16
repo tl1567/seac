@@ -26,9 +26,11 @@ def main(_):
     for i in range(n):
         df_agents.append(df[f"agent{i}/episode_reward"]["values"])
         plt.plot(steps, df_agents[-1])
+        plt.title(f"Reward of agent {i}")
         plt.show()
     
     df_agents = np.array(df_agents)
+    print(df_df_agents)
     sum_df_agents = np.sum(df_agents, axis=0)
     plt.plot(steps, sum_df_agents)
     plt.show()
